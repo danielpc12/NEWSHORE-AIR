@@ -1,0 +1,7 @@
+<div *ngFor="let flight of flights">
+  <p>Origen: {{ flight.getOrigin() }}</p>
+  <p>Destino: {{ flight.getDestination() }}</p>
+  <p>Aerolínea: {{ flight.transport.getFlightCarrier() }}</p>
+  <p>Número de vuelo: {{ flight.transport.getFlightNumber() }}</p>
+  <p>Precio: {{ flight.getPrice() }}</p>
+</div>
