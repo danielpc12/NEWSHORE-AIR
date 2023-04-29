@@ -21,4 +21,6 @@ export class FormComponent implements OnInit{
   onSearch(form: any){
     console.log(form)
   }
+
+  
 }

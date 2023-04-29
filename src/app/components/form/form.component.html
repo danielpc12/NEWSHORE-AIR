@@ -1,11 +1,11 @@
 <form [formGroup]="flightsForm" (ngSubmit)="onSearch(flightsForm.value)">
     <div class="form-group">
       <label for="originInput">Origin</label>
-      <input type="text" class="form-control" id="originInput" placeholder="Enter origin">
+      <input type="text" class="form-control" id="originInput" placeholder="Enter origin" formControlName="origin" oninput="this.value = this.value.toUpperCase()" maxlength="3">
     </div>
     <div class="form-group">
       <label for="exampleInputPassword1">Destination</label>
-      <input type="text" class="form-control" id="destinationInput" placeholder="Enter destination">
+      <input type="text" class="form-control" id="destinationInput" placeholder="Enter destination" formControlName="destination" oninput="this.value = this.value.toUpperCase()" maxlength="3">
     </div>
     <button type="submit" class="btn btn-primary">Search</button>
 </form>
