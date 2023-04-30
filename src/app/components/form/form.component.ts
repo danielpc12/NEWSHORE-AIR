@@ -22,5 +22,10 @@ export class FormComponent implements OnInit{
     console.log(form)
   }
 
-  
+  isDifferent(): boolean{
+    if (this.flightsForm.get('origin')?.value === this.flightsForm.get('destination')?.value){
+      return true
+    }
+    return false
+  }
 }
