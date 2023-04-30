@@ -8,15 +8,14 @@ import {FormGroup, FormControl, Validators} from '@angular/forms'
 })
 export class FormComponent implements OnInit{
 
-  flightsForm = new FormGroup({
+  public flightsForm = new FormGroup({
     origin: new FormControl('', Validators.required),
     destination: new FormControl('', Validators.required)
   })
+
   constructor(){}
 
-  ngOnInit(): void {
-      
-  }
+  ngOnInit(): void {}
 
   onSearch(form: any){
     console.log(form)
@@ -29,3 +28,5 @@ export class FormComponent implements OnInit{
     return false
   }
 }
+
+export { FormGroup };

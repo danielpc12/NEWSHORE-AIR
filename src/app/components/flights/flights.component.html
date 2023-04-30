@@ -1,3 +1,17 @@
+<form [formGroup]="flightsForm" (ngSubmit)="onSearch(flightsForm.value)">
+  <div *ngIf="isDifferent()" class="alert alert-danger mt-3">Origin and Destination cannot be the same.</div>
+  <div class="form-group">
+    <label for="originInput">Origin</label>
+    <input type="text" class="form-control" id="originInput" placeholder="Enter origin" formControlName="origin" oninput="this.value = this.value.toUpperCase()" maxlength="3">
+  </div>
+  <div class="form-group">
+    <label for="destinationInput">Destination</label>
+    <input type="text" class="form-control" id="destinationInput" placeholder="Enter destination" formControlName="destination" oninput="this.value = this.value.toUpperCase()" maxlength="3">
+  </div>
+  <button type="submit" class="btn btn-primary" [disabled]="isDifferent()">Search</button>
+</form>
+
+
 <div *ngFor="let flight of flights">
   <p>Origen: {{ flight.getOrigin() }}</p>
   <p>Destino: {{ flight.getDestination() }}</p>
