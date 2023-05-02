@@ -7,7 +7,6 @@ export class Transport {
         this.flightNumber = flightNumber;
     }
 
-    // getters y setters para acceder a las propiedades privadas
     getFlightCarrier() {
         return this.flightCarrier;
     }

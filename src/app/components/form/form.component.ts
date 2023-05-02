@@ -18,7 +18,6 @@ export class FormComponent implements OnInit{
   ngOnInit(): void {}
 
   onSearch(form: any){
-    console.log(form)
   }
 
   isDifferent(): boolean{

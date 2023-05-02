@@ -31,11 +31,9 @@ export class FlightsComponent implements OnInit {
   ngOnInit() {
     this.apiService.getFlights().subscribe(
       data => {
-        console.log('API Response:', data);
         this.allFlights = data.map((flight: any) => {
           return new Flight(new Transport(flight.flightCarrier, flight.flightNumber), flight.departureStation, flight.arrivalStation, flight.price);
         });
-        console.log('Flights:', this.allFlights);
       },
       error => {
         console.log(error);
@@ -45,33 +43,21 @@ export class FlightsComponent implements OnInit {
 
   public lastCurrency: string = 'USD';
 
-// En el método onSearch, actualizar la última moneda de destino cuando se realiza una conversión
-onSearch(form: any) {
+  onSearch(form: any) {
   const origin = this.flightsForm.get('origin')?.value;
   const destination = this.flightsForm.get('destination')?.value;
   const currency = this.flightsForm.get('currency')?.value;
 
   this.convertService.convertCurrency(this.lastCurrency, currency, 1).subscribe(
     data => {
-      console.log('Conversion rate:', data);
       const conversionRate = data.rates[currency].rate;
       this.lastCurrency = currency;
-  
         this.flights = this.allFlights.filter(flight => {
           const price = Number(flight.getPrice()) * Number(conversionRate);
           flight.setPrice(Number(price.toFixed(2)));
           return flight.getOrigin() === origin && flight.getDestination() === destination;
         });
-  
-        this.flights = this.filterFlightsByOriginAndDestination();
-        const filteredFlightsByOrigin = this.filterFlightsByOrigin(origin);
-        console.log('Filtered flights by origin:', filteredFlightsByOrigin);
-  
-        const filteredFlightsByDestination = this.filterFlightsByDestination(destination);
-        console.log('Filtered flights by destination:', filteredFlightsByDestination);
-
-        console.log('Filtered flights by origin and destination:', this.filterFlightsByOriginAndDestination());
-  
+        this.flights = this.filterFlightsByOriginAndDestination();  
         this.isSearched = true;
       },
       error => {
@@ -98,14 +84,11 @@ onSearch(form: any) {
     if (!origin || !destination || this.isSearched) {
       return false;
     }
-  
     const flights = this.flights.concat(this.filteredFlightsByOriginAndDestination);
-    
+
     return flights.length > 0;
   }
-  
-  
-  
+
   filterFlightsByOrigin(origin: string): Flight[] {
     return this.allFlights.filter(flight => flight.getOrigin() === origin);
   }
