@@ -8,7 +8,7 @@ import { Flight } from '../models/Flight';
 })
 export class ApiService {
 
-  private url = 'https://recruiting-api.newshore.es/api/flights/0';
+  private url = 'https://recruiting-api.newshore.es/api/flights/1';
 
   constructor(private http: HttpClient) { }
 

@@ -15,6 +15,7 @@ export class FlightsComponent implements OnInit {
   public allFlights: Flight[];
   public flightsForm: FormGroup;
   public isSearched: boolean;
+  public filteredFlightsByOriginAndDestination: Flight[] = [];
 
   constructor(private apiService: ApiService, private convertService: ConvertService) { 
     this.flights = [];
@@ -42,20 +43,35 @@ export class FlightsComponent implements OnInit {
     );
   }  
 
-  onSearch(form: any) {
-    const origin = this.flightsForm.get('origin')?.value;
-    const destination = this.flightsForm.get('destination')?.value;
-    const currency = this.flightsForm.get('currency')?.value;
-    
-    this.convertService.convertCurrency('USD', currency, 1).subscribe(
-      data => {
-        console.log('Conversion rate:', data);
-        const conversionRate = data.rates[currency].rate;
-        
+  public lastCurrency: string = 'USD';
+
+// En el método onSearch, actualizar la última moneda de destino cuando se realiza una conversión
+onSearch(form: any) {
+  const origin = this.flightsForm.get('origin')?.value;
+  const destination = this.flightsForm.get('destination')?.value;
+  const currency = this.flightsForm.get('currency')?.value;
+
+  this.convertService.convertCurrency(this.lastCurrency, currency, 1).subscribe(
+    data => {
+      console.log('Conversion rate:', data);
+      const conversionRate = data.rates[currency].rate;
+      this.lastCurrency = currency;
+  
         this.flights = this.allFlights.filter(flight => {
-          flight.setPrice(Number(flight.getPrice()) * Number(conversionRate));
+          const price = Number(flight.getPrice()) * Number(conversionRate);
+          flight.setPrice(Number(price.toFixed(2)));
           return flight.getOrigin() === origin && flight.getDestination() === destination;
         });
+  
+        this.flights = this.filterFlightsByOriginAndDestination();
+        const filteredFlightsByOrigin = this.filterFlightsByOrigin(origin);
+        console.log('Filtered flights by origin:', filteredFlightsByOrigin);
+  
+        const filteredFlightsByDestination = this.filterFlightsByDestination(destination);
+        console.log('Filtered flights by destination:', filteredFlightsByDestination);
+
+        console.log('Filtered flights by origin and destination:', this.filterFlightsByOriginAndDestination());
+  
         this.isSearched = true;
       },
       error => {
@@ -64,12 +80,11 @@ export class FlightsComponent implements OnInit {
     );
   }
   
-
   isDifferent(): boolean {
     const origin = this.flightsForm.get('origin')?.value;
     const destination = this.flightsForm.get('destination')?.value;
   
-    if (!origin || !destination || !this.isSearched) {
+    if (!origin || !destination) {
       return false;
     }
   
@@ -80,14 +95,44 @@ export class FlightsComponent implements OnInit {
     const origin = this.flightsForm.get('origin')?.value;
     const destination = this.flightsForm.get('destination')?.value;
   
-    if (!origin || !destination) {
+    if (!origin || !destination || this.isSearched) {
       return false;
     }
   
-    return this.flights.some(flight => {
-      return flight.getOrigin() === origin && flight.getDestination() === destination;
+    const flights = this.flights.concat(this.filteredFlightsByOriginAndDestination);
+    
+    return flights.length > 0;
+  }
+  
+  
+  
+  filterFlightsByOrigin(origin: string): Flight[] {
+    return this.allFlights.filter(flight => flight.getOrigin() === origin);
+  }
+  
+  filterFlightsByDestination(destination: string): Flight[] {
+    return this.allFlights.filter(flight => flight.getDestination() === destination);
+  }
+  
+  filterFlightsByOriginAndDestination(): Flight[] {
+    const origin = this.flightsForm.get('origin')?.value;
+    const destination = this.flightsForm.get('destination')?.value;
+    const flightsFilteredByOrigin = this.filterFlightsByOrigin(origin);
+    const flightsFilteredByDestination = this.filterFlightsByDestination(destination);
+    const flightsFilteredByOriginAndDestination: Flight[] = this.flights.filter(flight => flight.getOrigin() === origin && flight.getDestination() === destination);
+  
+    flightsFilteredByOrigin.forEach(flightByOrigin => {
+      flightsFilteredByDestination.forEach(flightByDestination => {
+        if (flightByOrigin.getDestination() === flightByDestination.getOrigin()) {
+          flightsFilteredByOriginAndDestination.push(flightByOrigin);
+          flightsFilteredByOriginAndDestination.push(flightByDestination);
+        }
+      });
     });
+  
+    return flightsFilteredByOriginAndDestination;
   }
   
   
 }
+
